@@ -1,5 +1,8 @@
 package com.github.menglanyan.airline_booking.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum City {
 
     // Cities in UK
