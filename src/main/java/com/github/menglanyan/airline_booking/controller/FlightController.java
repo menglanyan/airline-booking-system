@@ -48,10 +48,10 @@ public class FlightController {
 
     @GetMapping("/search")
     public ResponseEntity<Response<List<FlightDTO>>> searchForFlight(
-            @RequestParam String departureAirportIataCode, @RequestParam String arrivalAirportIataCode,
+            @RequestParam String departureIataCode, @RequestParam String arrivalIataCode,
             @RequestParam(required = false, defaultValue = "SCHEDULED") FlightStatus status,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate) {
-        return ResponseEntity.ok(flightService.searchForFlight(departureAirportIataCode, arrivalAirportIataCode,
+        return ResponseEntity.ok(flightService.searchForFlight(departureIataCode, arrivalIataCode,
                 status, departureDate));
     }
 
