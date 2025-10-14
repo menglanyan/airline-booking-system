@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,16 +48,20 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Email already exists.");
         }
 
-        // Prepare roles for new user
+        // Prepare roles for new user, user will always have a default role of CUSTOMER
+        Role defaultRole = roleRepo.findByName("CUSTOMER")
+                .orElseThrow(() -> new NotFoundException("Role CUSTOMER does not exist."));
+
         List<Role> userRoles;
         if (registrationRequest.getRoles() != null && !registrationRequest.getRoles().isEmpty()) {
-            userRoles = registrationRequest.getRoles().stream()
+            userRoles = new ArrayList<>(
+                    registrationRequest.getRoles().stream()
                     .map(roleName -> roleRepo.findByName(roleName.toUpperCase())
                             .orElseThrow(() -> new NotFoundException("Role" + roleName + "Not Found")))
-                    .toList();
+                    .toList()
+            );
+            userRoles.add(defaultRole);
         } else {
-            Role defaultRole = roleRepo.findByName("CUSTOMER")
-                    .orElseThrow(() -> new NotFoundException("Role CUSTOMER does not exist."));
             userRoles = List.of(defaultRole);
         }
 
