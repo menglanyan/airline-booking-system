@@ -42,9 +42,12 @@ public class SecurityFilter {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        // Protect this specific one before the wildcard
+                        .requestMatchers(HttpMethod.GET, "/api/flights/my-flights").authenticated()
+
                         // Public READ endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/flights", "/api/flights/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/airports", "/api/airports/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/flights/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/airports/**").permitAll()
 
                         // Swagger docs public
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

@@ -10,11 +10,13 @@ import com.github.menglanyan.airline_booking.enums.City;
 import com.github.menglanyan.airline_booking.enums.Country;
 import com.github.menglanyan.airline_booking.enums.FlightStatus;
 import com.github.menglanyan.airline_booking.exceptions.BadRequestException;
+import com.github.menglanyan.airline_booking.exceptions.CustomAccessDenialHandler;
 import com.github.menglanyan.airline_booking.exceptions.NotFoundException;
 import com.github.menglanyan.airline_booking.repo.AirportRepo;
 import com.github.menglanyan.airline_booking.repo.FlightRepo;
 import com.github.menglanyan.airline_booking.repo.UserRepo;
 import com.github.menglanyan.airline_booking.services.FlightService;
+import com.github.menglanyan.airline_booking.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -39,6 +41,8 @@ public class FlightServiceImpl implements FlightService {
     private final UserRepo userRepo;
 
     private final ModelMapper modelMapper;
+
+    private final UserService userService;
 
     @Override
     public Response<?> createFlight(CreateFlightRequest createFlightRequest) {
@@ -224,4 +228,33 @@ public class FlightServiceImpl implements FlightService {
                 .data(List.of(Country.values()))
                 .build();
     }
+
+    @Override
+    public Response<List<FlightDTO>> getMyFlights() {
+        User currentUser = userService.currentUser();
+
+        boolean isPilot = currentUser.getRoles().stream()
+                .anyMatch(role -> role.getName().equalsIgnoreCase("PILOT"));
+
+        if (!isPilot) {
+            throw new BadRequestException("Only pilots can view their assigned flights");
+        }
+
+        List<Flight> flights = flightRepo.findByAssignedPilotIdOrderByDepartureTimeDesc(currentUser.getId());
+
+        List<FlightDTO> flightDTOS = flights.stream()
+                .map(flight -> {
+                    FlightDTO flightDTO = modelMapper.map(flight, FlightDTO.class);
+                    flightDTO.setBooking(null);
+                    return flightDTO;
+                })
+                .toList();
+
+        return Response.<List<FlightDTO>>builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Flights Retrieved Successfully")
+                .data(flightDTOS)
+                .build();
+    }
+
 }

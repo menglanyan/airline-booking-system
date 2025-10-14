@@ -64,4 +64,10 @@ public class FlightController {
     public ResponseEntity<Response<List<Country>>> getAllCountries() {
         return ResponseEntity.ok(flightService.getAllCountries());
     }
+
+    @GetMapping("/my-flights")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PILOT')")
+    public ResponseEntity<Response<List<FlightDTO>>> getMyFlights() {
+        return ResponseEntity.ok(flightService.getMyFlights());
+    }
 }

@@ -35,10 +35,19 @@ public class OpenApiConfig {
             openApi.getPaths().forEach((path, item) ->
                 item.readOperationsMap().forEach((method, op) -> {
                     boolean isAuth = path.startsWith("/api/auth/");
-                    boolean isPublicGet = method == PathItem.HttpMethod.GET &&
-                            (path.equals("/api/flights") || path.startsWith("/api/flights/") ||
-                                    path.equals("/api/airports") || path.startsWith("/api/airports/"));
-                    if (isAuth || isPublicGet) {
+
+                    boolean isFlightsPublicGet =
+                        method == PathItem.HttpMethod.GET
+                            && (path.equals("/api/flights") || path.startsWith("/api/flights/"))
+                            // except these protected flight endpoints:
+                            && !path.equals("/api/flights/my-flights")
+                            && !path.startsWith("/api/flights/my-flights/");
+
+                    boolean isAirportsPublicGet =
+                        method == PathItem.HttpMethod.GET
+                            && (path.equals("/api/airports") || path.startsWith("/api/airports/"));
+
+                    if (isAuth || isFlightsPublicGet || isAirportsPublicGet) {
                         op.setSecurity(java.util.Collections.emptyList());
                     }
                 })

@@ -1,6 +1,7 @@
 package com.github.menglanyan.airline_booking.repo;
 
 import com.github.menglanyan.airline_booking.entities.Flight;
+import com.github.menglanyan.airline_booking.entities.User;
 import com.github.menglanyan.airline_booking.enums.FlightStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,6 @@ public interface FlightRepo extends JpaRepository<Flight, Long> {
             String departureIataCode, String arrivalIataCode, FlightStatus status,
             LocalDateTime startOfDay, LocalDateTime endOfDay
     );
+
+    List<Flight> findByAssignedPilotIdOrderByDepartureTimeDesc(Long pilotId);
 }

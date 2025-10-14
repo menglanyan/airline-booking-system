@@ -26,4 +26,6 @@ public interface FlightService {
     Response<List<City>> getAllCities();
 
     Response<List<Country>> getAllCountries();
+
+    Response<List<FlightDTO>> getMyFlights();
 }
