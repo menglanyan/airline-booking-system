@@ -5,6 +5,7 @@ import com.github.menglanyan.airline_booking.exceptions.CustomAuthenticationEntr
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -38,14 +39,18 @@ public class SecurityFilter {
                 .exceptionHandling( ex ->
                         ex.accessDeniedHandler(customAccessDenialHandler)
                                 .authenticationEntryPoint(customAuthenticationEntryPoint))
-                .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/auth/**",
-                                        "/api/airports/**",
-                                        "api/flights/**",
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui/**",
-                                        "/swagger-ui.html").permitAll()
-                                .anyRequest().authenticated())
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Public READ endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/flights", "/api/flights/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/airports", "/api/airports/**").permitAll()
+
+                        // Swagger docs public
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
+                        // Everything else requires authentication
+                        .anyRequest().authenticated())
                 .sessionManagement(mag -> mag.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
 
