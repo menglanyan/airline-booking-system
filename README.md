@@ -36,15 +36,27 @@ Integrated **JavaMailSender** to deliver automated transactional emails, such as
 
 ### 🎨 Frontend — Built with React
 
-**🔹 Responsive UI Design**  
-Developed a dynamic interface where users can register, search for flights, and manage bookings.  
-Admins and pilots access role-based dashboards with tailored functionality.
+**🔹 Role-Based User Interface**  
+Designed an intuitive and responsive interface for different user roles:
+- **Customer**: Search and book flights, manage bookings, update personal profile
+- **Pilot**: View assigned flights and update flight statuses
+- **Admin**: Manage all flights, airports, users, and assign pilot roles
 
 **🔹 Real-Time Flight Search**  
-Integrated API-based flight filtering by **airport**, **status**, **date**, and **time**, allowing customers to easily find available flights.
+Integrated API-based flight filtering by **airport**, **status**, **date**, and **time**, allowing customers to easily find available flights
 
-**🔹 Smooth API Integration**  
-Used **Axios** for REST communication with the backend, automatically attaching JWT tokens to authorized requests.
+**🔹 API Integration**  
+Seamlessly connected to the Spring Boot backend using **Axios** for secure data transactions
+Implemented interceptors to attach JWT tokens for authorized requests
+
+**🔹 Authentication & Security**
+Implemented **JWT-based authentication** with automatic token management and logout on expiration  
+Restricted route access through **React Router DOM** and role-specific guards
+
+**🔹 Modern Design**
+Developed dynamic dashboards that adapt to each user’s role and permissions
+Responsive layout with reusable React components for naviagtion bar, footer, and message display
+Integrated notification and toast messages for user experience
 
 ---
 
